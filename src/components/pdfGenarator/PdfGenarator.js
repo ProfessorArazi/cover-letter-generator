@@ -1,5 +1,12 @@
 import React from "react";
-import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
+import {
+  Document,
+  Page,
+  Text,
+  View,
+  StyleSheet,
+  Link,
+} from "@react-pdf/renderer";
 import { saveAs } from "file-saver";
 import { pdf, Font } from "@react-pdf/renderer";
 import CenturyGothic from "../../assets/fonts/Century Gothic.ttf";
@@ -45,6 +52,9 @@ const PdfGenerator = () => {
     lName: {
       fontWeight: "bold",
     },
+    contactContainer: {
+      flexDirection: "row",
+    },
     contact: {
       fontSize: 11,
       lineHeight: 1.5,
@@ -57,7 +67,6 @@ const PdfGenerator = () => {
   const formattedDate = date.toLocaleDateString("en-US", options);
   const handleDownload = async (values) => {
     const {
-      city,
       companyName,
       email,
       experienceYears,
@@ -65,6 +74,9 @@ const PdfGenerator = () => {
       lastName,
       jobTitle,
       phoneNumber,
+      portfolio,
+      github,
+      linkedin,
     } = values;
     const blob = await pdf(
       <Document>
@@ -74,9 +86,35 @@ const PdfGenerator = () => {
               <Text style={styles.fName}>{firstName.toUpperCase()}</Text>
               <Text style={styles.lName}>{` ${lastName.toUpperCase()}`}</Text>
             </Text>
-            <Text style={styles.contact}>
-              {phoneNumber} | {email} | {city}
-            </Text>
+            <View style={{ flexDirection: "row" }}>
+              {portfolio && (
+                <View style={styles.contactContainer}>
+                  <Link href={portfolio} style={styles.contact}>
+                    Portfolio
+                  </Link>
+                  <Text style={styles.contact}> |</Text>
+                </View>
+              )}
+              {github && (
+                <View style={styles.contactContainer}>
+                  <Link href={github} style={styles.contact}>
+                    Github
+                  </Link>
+                  <Text style={styles.contact}> |</Text>
+                </View>
+              )}
+              {linkedin && (
+                <View style={styles.contactContainer}>
+                  <Link href={linkedin} style={styles.contact}>
+                    Linkedin
+                  </Link>
+                  <Text style={styles.contact}> |</Text>
+                </View>
+              )}
+              <Text style={styles.contact}>
+                {phoneNumber} | {email}
+              </Text>
+            </View>
           </View>
           <View style={styles.section}>
             <Text style={styles.text}>{formattedDate}</Text>

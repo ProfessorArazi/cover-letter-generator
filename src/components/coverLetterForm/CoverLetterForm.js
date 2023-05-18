@@ -23,7 +23,6 @@ export const CoverLetterForm = ({ handleDownload }) => {
       required: true,
     },
     { label: "Email:", name: "email", type: "email", required: true },
-    { label: "City:", name: "city", type: "text", required: true },
     {
       label: "Company Name:",
       name: "companyName",
@@ -36,7 +35,11 @@ export const CoverLetterForm = ({ handleDownload }) => {
       name: "experienceYears",
       type: "number",
       required: true,
+      min: 0,
     },
+    { label: "Portfolio:", name: "portfolio", type: "text", required: false },
+    { label: "Github:", name: "github", type: "text", required: false },
+    { label: "Linkedin:", name: "linkedin", type: "text", required: false },
   ];
 
   const handleChange = (e) => {
@@ -54,7 +57,7 @@ export const CoverLetterForm = ({ handleDownload }) => {
 
   return (
     <div className="form-container">
-      <h2>Cover Letter Generator Form</h2>
+      <h2>Cover Letter Generator</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-grid">
           {inputFields.map((field, index) => (
@@ -67,6 +70,7 @@ export const CoverLetterForm = ({ handleDownload }) => {
                 value={formValues[field.name]}
                 onChange={handleChange}
                 required={field.required}
+                min={field.min}
               />
             </div>
           ))}

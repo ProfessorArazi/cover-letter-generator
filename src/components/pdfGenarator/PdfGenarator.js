@@ -169,7 +169,10 @@ const PdfGenerator = () => {
       </Document>
     ).toBlob();
 
-    saveAs(blob, "generated_pdf.pdf");
+    saveAs(
+      blob,
+      `${firstName} ${lastName} - cover letter for ${companyName}.pdf`
+    );
   };
 
   return <CoverLetterForm handleDownload={handleDownload} />;

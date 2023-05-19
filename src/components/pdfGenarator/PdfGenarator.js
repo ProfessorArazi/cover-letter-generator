@@ -11,6 +11,8 @@ import { saveAs } from "file-saver";
 import { pdf, Font } from "@react-pdf/renderer";
 import CenturyGothic from "../../assets/fonts/Century Gothic.ttf";
 import CenturyGothicBold from "../../assets/fonts/GOTHICB0.TTF";
+import Rubik from "../../assets/fonts/Rubik-Regular.ttf";
+import RubikBold from "../../assets/fonts/Rubik-Bold.ttf";
 import { CoverLetterForm } from "../coverLetterForm/CoverLetterForm";
 
 const PdfGenerator = () => {
@@ -26,6 +28,23 @@ const PdfGenerator = () => {
       },
     ],
   });
+  Font.register({
+    family: "Rubik",
+    fonts: [
+      {
+        src: Rubik,
+      },
+      {
+        src: RubikBold,
+        fontWeight: "bold",
+      },
+    ],
+  });
+
+  function containsHebrew(text) {
+    const hebrewRegex = /[\u0590-\u05FF\uFB1D-\uFB4F]+/;
+    return hebrewRegex.test(text);
+  }
 
   const styles = StyleSheet.create({
     page: {
@@ -62,10 +81,10 @@ const PdfGenerator = () => {
     },
   });
 
-  const date = new Date();
-  const options = { year: "numeric", month: "long", day: "numeric" };
-  const formattedDate = date.toLocaleDateString("en-US", options);
   const handleDownload = async (values) => {
+    const date = new Date();
+    const options = { year: "numeric", month: "long", day: "numeric" };
+    const formattedDate = date.toLocaleDateString("en-US", options);
     const {
       companyName,
       email,
@@ -78,13 +97,27 @@ const PdfGenerator = () => {
       github,
       linkedin,
     } = values;
+
+    let fName = firstName;
+    let lName = lastName;
+    let fontName = "Century Gothic";
+
+    if (containsHebrew(firstName)) {
+      [fName, lName] = [lastName, `${firstName} `];
+      fontName = "Rubik";
+    }
+
     const blob = await pdf(
       <Document>
         <Page size="A4" style={styles.page}>
           <View style={styles.section}>
-            <Text style={styles.name}>
-              <Text style={styles.fName}>{firstName.toUpperCase()}</Text>
-              <Text style={styles.lName}>{` ${lastName.toUpperCase()}`}</Text>
+            <Text style={[styles.name, { fontFamily: fontName }]}>
+              <Text style={fName === lastName ? styles.lName : styles.fName}>
+                {fName.toUpperCase()}
+              </Text>
+              <Text
+                style={fName === lastName ? styles.fName : styles.lName}
+              >{` ${lName.toUpperCase()}`}</Text>
             </Text>
             <View style={{ flexDirection: "row" }}>
               {portfolio && (
@@ -160,9 +193,10 @@ const PdfGenerator = () => {
           </View>
           <View style={styles.section}>
             <Text style={styles.text}>Sincerely,</Text>
-            <Text style={styles.text}>
-              {firstName.charAt(0).toUpperCase() + firstName.slice(1)}{" "}
-              {lastName.charAt(0).toUpperCase() + lastName.slice(1)}
+            <Text style={[styles.text, { fontFamily: fontName }]}>
+              {fName.charAt(0).toUpperCase() + fName.slice(1)}
+              {fName !== lastName && " "}
+              {lName.charAt(0).toUpperCase() + lName.slice(1)}
             </Text>
           </View>
         </Page>
